@@ -15,27 +15,24 @@ class ArticleItemDetails extends React.Component {
           />
 
           <span className={"author"}>
-            <a href="/">
-              <b>{this.props.article.author.name} </b> in <b>Better Advice</b>
-            </a>
+            <b>{this.props.article.author.name} </b> in <b>Better Advice</b>
           </span>
         </div>
-        <a href="/">
-          <span
-            className={"heading"}
-            style={{
-              fontSize: this.props.headingFont === "small" ? "16px" : "22px",
-              lineHeight: this.props.headingFont === "small" ? "20px" : "28px",
-            }}
-          >
-            {this.props.article.headLine}
-          </span>
-        </a>
+
+        <span
+          className={"heading"}
+          style={{
+            fontSize: this.props.headingFont === "small" ? "16px" : "22px",
+            lineHeight: this.props.headingFont === "small" ? "20px" : "28px",
+          }}
+        >
+          {this.props.article.headLine}
+        </span>
 
         {this.props.subheading && (
           <div className={"subheading"}>
             <p>
-              <a href="/">{this.props.article.subHead}</a>
+              <span>{this.props.article.subHead}</span>
             </p>
           </div>
         )}

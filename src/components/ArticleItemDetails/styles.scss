@@ -1,7 +1,12 @@
 .author {
   font-size: 13px;
   margin-left: 5px;
-  font-weight: 400
+  font-weight: 400;
+}
+.author:hover {
+  text-decoration: underline;
+  color: #0056b3;
+  cursor: pointer;
 }
 .heading {
   font-weight: 700;
@@ -9,6 +14,10 @@
   letter-spacing: 0;
   margin: 0;
   padding: 0;
+}
+.heading:hover {
+  text-decoration: underline #0056b3;
+  cursor: pointer;
 }
 
 .subheading {
@@ -21,8 +30,13 @@
     line-height: 28px;
     font-weight: 400;
     letter-spacing: -0.003em;
-    overflow: hidden
+    overflow: hidden;
   }
+}
+.subheading:hover {
+  text-decoration: underline;
+  color: #0056b3;
+  cursor: pointer;
 }
 .date {
   font-size: 13px;
@@ -41,7 +55,6 @@
         display: block;
         span {
           font-size: 16px;
-
         }
       }
     }

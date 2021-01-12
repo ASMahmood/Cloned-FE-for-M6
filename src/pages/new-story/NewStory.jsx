@@ -9,7 +9,9 @@ import CategoryPicker from "../../components/CategoryPicker";
 export default class NewStory extends Component {
   state = {
     html: "",
-    category: "",
+    category: {},
+    title: "",
+    img: "",
   };
   editor = React.createRef();
   onChange = (html) => {
@@ -22,23 +24,38 @@ export default class NewStory extends Component {
       this.editor && this.editor.current.focus();
     }
   };
-  // postArticle = async() => {
-  //   try {
-  //     let body = {
-
-  //     }
-  //     let response = await fetch("http://localhost:9001/articles/", {
-  //       "method": "POST",
-  //       "body": body,
-  //       "headers": {
-  //         "Content-Type: application/json",
-  //       }
-  //     })
-
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
+  submitButton = (e) => {
+    e.preventDefault();
+    this.postArticle();
+  };
+  postArticle = async () => {
+    try {
+      let body = {
+        category: this.state.category,
+        author: {
+          name: "Not Abdul",
+          img:
+            "https://media.tenor.com/images/ebcdb89dd3dac8d1434c8151b6bddb16/tenor.gif",
+        },
+        headLine: this.state.title,
+        subHead: "yooooo",
+        content: this.state.html,
+        cover: this.state.img,
+      };
+      console.log(body);
+      let response = await fetch("http://localhost:9001/articles/", {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      this.props.history.push("/");
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   render() {
     const { html } = this.state;
     return (
@@ -46,14 +63,16 @@ export default class NewStory extends Component {
         <div className="category-container">
           <CategoryPicker
             onChange={(topic) => {
-              this.setState({ category: topic.name });
+              this.setState({ category: { name: topic.name, img: topic.img } });
             }}
           />
         </div>
         <input
           onKeyDown={this.onKeyDown}
           placeholder="Title"
+          value={this.state.title}
           className="article-title-input"
+          onChange={(e) => this.setState({ title: e.currentTarget.value })}
         />
 
         <ReactQuill
@@ -69,9 +88,15 @@ export default class NewStory extends Component {
           onKeyDown={this.onKeyDown}
           placeholder="Cover link e.g : https://picsum.photos/800"
           className="article-cover-input"
+          value={this.state.img}
+          onChange={(e) => this.setState({ img: e.currentTarget.value })}
         />
 
-        <Button variant="success" className="post-btn">
+        <Button
+          variant="success"
+          className="post-btn"
+          onClick={(e) => this.submitButton(e)}
+        >
           Post
         </Button>
       </Container>
