@@ -9,11 +9,12 @@ import CategoryPicker from "../../components/CategoryPicker";
 export default class NewStory extends Component {
   state = {
     html: "",
+    category: "",
   };
   editor = React.createRef();
   onChange = (html) => {
-    this.setState({ html })
-    console.log(html)
+    this.setState({ html });
+    console.log(html);
   };
   onKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -21,12 +22,33 @@ export default class NewStory extends Component {
       this.editor && this.editor.current.focus();
     }
   };
+  // postArticle = async() => {
+  //   try {
+  //     let body = {
+
+  //     }
+  //     let response = await fetch("http://localhost:9001/articles/", {
+  //       "method": "POST",
+  //       "body": body,
+  //       "headers": {
+  //         "Content-Type: application/json",
+  //       }
+  //     })
+
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
   render() {
     const { html } = this.state;
     return (
       <Container className="new-story-container" expand="md">
         <div className="category-container">
-        <CategoryPicker onChange={(topic)=>{console.log(topic)}} />
+          <CategoryPicker
+            onChange={(topic) => {
+              this.setState({ category: topic.name });
+            }}
+          />
         </div>
         <input
           onKeyDown={this.onKeyDown}
@@ -48,7 +70,7 @@ export default class NewStory extends Component {
           placeholder="Cover link e.g : https://picsum.photos/800"
           className="article-cover-input"
         />
-       
+
         <Button variant="success" className="post-btn">
           Post
         </Button>
