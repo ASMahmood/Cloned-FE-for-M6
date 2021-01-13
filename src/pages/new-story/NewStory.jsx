@@ -12,6 +12,7 @@ export default class NewStory extends Component {
     category: {},
     title: "",
     img: "",
+    subtitle: "",
   };
   editor = React.createRef();
   onChange = (html) => {
@@ -38,7 +39,7 @@ export default class NewStory extends Component {
             "https://media.tenor.com/images/ebcdb89dd3dac8d1434c8151b6bddb16/tenor.gif",
         },
         headLine: this.state.title,
-        subHead: "yooooo",
+        subHead: this.state.subtitle,
         content: this.state.html,
         cover: this.state.img,
       };
@@ -73,6 +74,13 @@ export default class NewStory extends Component {
           value={this.state.title}
           className="article-title-input"
           onChange={(e) => this.setState({ title: e.currentTarget.value })}
+        />
+        <input
+          onKeyDown={this.onKeyDown}
+          placeholder="Sub Title"
+          value={this.state.subtitle}
+          className="article-subtitle-input"
+          onChange={(e) => this.setState({ subtitle: e.currentTarget.value })}
         />
 
         <ReactQuill

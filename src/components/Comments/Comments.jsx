@@ -90,7 +90,7 @@ class Comments extends React.Component {
         >
           {this.state.reviews.length > 0
             ? this.state.reviews.length + " "
-            : "Calculating "}
+            : "No "}
           Responses
         </span>
         <div
