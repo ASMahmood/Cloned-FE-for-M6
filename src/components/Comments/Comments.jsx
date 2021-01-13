@@ -5,7 +5,7 @@ import "./styles.scss";
 
 class Comments extends React.Component {
   state = {
-    showComments: true,
+    showComments: false,
     editing: false,
     reviews: [],
     id: "",
