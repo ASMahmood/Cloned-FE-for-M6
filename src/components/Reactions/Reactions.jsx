@@ -5,6 +5,31 @@ import { FaRegComment } from "react-icons/fa";
 import { Button } from "react-bootstrap";
 export default function Reactions(props) {
   const [reviews, setReviews] = useState([]);
+  const calculateTimeDiff = (current, updated) => {
+    let currentTime = new Date();
+    let postDate = new Date(current);
+    let currentMilli = currentTime.getTime();
+    let postMilli = postDate.getTime();
+    let diffMilli = currentMilli - postMilli;
+    let diffMins = Math.ceil(diffMilli / 60000);
+    if (diffMins >= 60) {
+      let timeDiff = Math.floor(diffMins / 60).toString() + "h";
+
+      if (current === updated) {
+        return timeDiff;
+      } else {
+        return timeDiff + "• Edited";
+      }
+    } else {
+      let timeDiff = diffMins.toString() + "m";
+
+      if (current === updated) {
+        return timeDiff;
+      } else {
+        return timeDiff + "• Edited";
+      }
+    }
+  };
   const postReview = async (e) => {
     e.preventDefault();
     try {
@@ -81,7 +106,11 @@ export default function Reactions(props) {
 
       <div id="reviewLocation">
         {reviews.map((review) => (
-          <div className="mt-2">{review.text}</div>
+          <div className="mt-2">
+            {review.user} -{" "}
+            {calculateTimeDiff(review.createdAt, review.updatedAt)} ago -{" "}
+            {review.text}
+          </div>
         ))}
       </div>
 
