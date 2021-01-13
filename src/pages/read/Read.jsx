@@ -65,7 +65,7 @@ class Read extends Component {
             </Col>
           </Row>
           <div dangerouslySetInnerHTML={this.htmlArticle()} />
-          <Reactions />
+          <Reactions id={this.state.article._id} />
         </Container>
       )
     );

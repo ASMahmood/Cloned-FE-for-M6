@@ -1,9 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import { IoLogoTwitter, IoLogoLinkedin, IoLogoFacebook } from "react-icons/io";
 import { IoBookmarkOutline } from "react-icons/io5";
 import { FaRegComment } from "react-icons/fa";
 import { Button } from "react-bootstrap";
-export default function Reactions() {
+export default function Reactions(props) {
+  const [reviews, setReviews] = useState([]);
+  const postReview = async (e) => {
+    e.preventDefault();
+    try {
+      let text = document.querySelector("#commentForReview").value;
+      let body = {
+        text: text,
+        user: "Not_Abdul",
+      };
+      let response = await fetch("http://localhost:9001/articles/" + props.id, {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      document.querySelector("#commentForReview").value = "";
+      fetchReviews();
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchReviews = async () => {
+    try {
+      let response = await fetch(
+        "http://localhost:9001/articles/" + props.id + "/reviews"
+      );
+      let reviewsArray = await response.json();
+      setReviews(reviewsArray);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <div
@@ -28,7 +64,10 @@ export default function Reactions() {
               marginLeft: "1em",
             }}
           />
-          <span style={{ fontSize: 12, marginLeft: "0.5em" }}>
+          <span
+            style={{ fontSize: 12, marginLeft: "0.5em" }}
+            onClick={() => fetchReviews()}
+          >
             13 Responses
           </span>
         </div>
@@ -40,10 +79,21 @@ export default function Reactions() {
         </div>
       </div>
 
+      <div id="reviewLocation">
+        {reviews.map((review) => (
+          <div className="mt-2">{review.text}</div>
+        ))}
+      </div>
+
       <div style={{ marginTop: 50, marginBottom: 200 }}>
         <label>What are your thoughts?</label>
-        <textarea style={{ width: "100%", padding: 20 }} />
-        <Button variant="success">Send</Button>
+        <textarea
+          style={{ width: "100%", padding: 20 }}
+          id="commentForReview"
+        />
+        <Button variant="success" onClick={(e) => postReview(e)}>
+          Send
+        </Button>
       </div>
     </>
   );
