@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { IoLogoTwitter, IoLogoLinkedin, IoLogoFacebook } from "react-icons/io";
 import { IoBookmarkOutline } from "react-icons/io5";
 import { FaRegComment } from "react-icons/fa";

@@ -1,11 +1,14 @@
 import React from "react";
-import { Button, Container, Row, Col, Image } from "react-bootstrap";
+import { Button, Image } from "react-bootstrap";
+import { IoTrashOutline, IoBuildOutline } from "react-icons/io5";
 import "./styles.scss";
 
 class Comments extends React.Component {
   state = {
-    showComments: false,
+    showComments: true,
+    editing: false,
     reviews: [],
+    id: "",
   };
 
   componentDidMount = () => {
@@ -76,6 +79,66 @@ class Comments extends React.Component {
     }
   };
 
+  deleteArticle = async (reviewID) => {
+    try {
+      let response = await fetch(
+        "http://localhost:9001/articles/" +
+          this.props.id +
+          "/reviews/" +
+          reviewID,
+        {
+          method: "DELETE",
+        }
+      );
+      if (response.ok) {
+        this.fetchReviews();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  primeEdit = (content, id) => {
+    this.setState({ editing: true, id: id });
+    document.querySelector("#commentForReview").value = content;
+  };
+
+  cancelEdit = (e) => {
+    e.preventDefault();
+    this.setState({ editing: false, id: "" });
+    document.querySelector("#commentForReview").value = "";
+  };
+
+  editReview = async (e) => {
+    e.preventDefault();
+    try {
+      let text = document.querySelector("#commentForReview").value;
+      let body = {
+        text: text,
+        user: "Not_Abdul",
+      };
+      let response = await fetch(
+        "http://localhost:9001/articles/" +
+          this.props.id +
+          "/reviews/" +
+          this.state.id,
+        {
+          method: "PUT",
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      this.setState({ editing: false, id: "" });
+      document.querySelector("#commentForReview").value = "";
+      this.fetchReviews();
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   render() {
     return (
       <>
@@ -106,9 +169,28 @@ class Comments extends React.Component {
               id="commentForReview"
               placeholder="What are your thoughts?"
             />
-            <Button variant="success" onClick={(e) => this.postReview(e)}>
-              Send
-            </Button>
+            {this.state.editing ? (
+              <div className="d-flex">
+                <Button
+                  variant="warning"
+                  className="mx-auto w-100"
+                  onClick={(e) => this.editReview(e)}
+                >
+                  Edit
+                </Button>
+                <Button
+                  variant="danger"
+                  className="mx-auto w-100"
+                  onClick={(e) => this.cancelEdit(e)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            ) : (
+              <Button variant="success" onClick={(e) => this.postReview(e)}>
+                Send
+              </Button>
+            )}
           </div>
           <div className="commentsHolder d-flex flex-column">
             {this.state.reviews.length > 0 &&
@@ -132,6 +214,15 @@ class Comments extends React.Component {
                         ago
                       </p>
                     </div>
+                    <IoBuildOutline
+                      className="mx-2"
+                      style={{ fontSize: 20, cursor: "pointer" }}
+                      onClick={() => this.primeEdit(review.text, review._id)}
+                    />
+                    <IoTrashOutline
+                      style={{ fontSize: 20, cursor: "pointer" }}
+                      onClick={() => this.deleteArticle(review._id)}
+                    />
                   </div>
                   <div className="postBody">{review.text}</div>
                 </div>

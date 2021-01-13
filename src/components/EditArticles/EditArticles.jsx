@@ -1,7 +1,6 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
-import { IoTrashOutline } from "react-icons/io5";
-import { IoBuildOutline } from "react-icons/io5";
+import { IoTrashOutline, IoBuildOutline } from "react-icons/io5";
 
 class EditArticles extends React.Component {
   deleteArticle = async () => {
