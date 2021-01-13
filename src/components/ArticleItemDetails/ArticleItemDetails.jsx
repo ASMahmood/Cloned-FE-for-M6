@@ -15,7 +15,10 @@ class ArticleItemDetails extends React.Component {
           />
 
           <span className={"author"}>
-            <b>{this.props.article.author.name} </b> in <b>Better Advice</b>
+            <b>{this.props.article.author.name} </b> in{" "}
+            <b>
+              {this.props.article.category && this.props.article.category.name}
+            </b>
           </span>
         </div>
 
