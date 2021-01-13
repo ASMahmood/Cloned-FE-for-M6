@@ -1,6 +1,7 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
 import { IoTrashOutline } from "react-icons/io5";
+import { IoBuildOutline } from "react-icons/io5";
 
 class EditArticles extends React.Component {
   deleteArticle = async () => {
@@ -52,6 +53,13 @@ class EditArticles extends React.Component {
                   this.props.article.category.name}
               </b>
             </span>
+            <IoBuildOutline
+              className="mr-3"
+              style={{ fontSize: 20, cursor: "pointer" }}
+              onClick={() =>
+                this.props.history.push("/edit-story/" + this.props.article._id)
+              }
+            />
             <IoTrashOutline
               style={{ fontSize: 20, cursor: "pointer" }}
               onClick={() => this.deleteArticle()}

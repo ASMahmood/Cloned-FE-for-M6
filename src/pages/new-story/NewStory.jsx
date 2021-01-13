@@ -15,6 +15,11 @@ export default class NewStory extends Component {
     subtitle: "",
   };
   editor = React.createRef();
+  componentDidMount = () => {
+    if (this.props.match.params.slug) {
+      this.fetchAndAssign();
+    }
+  };
   onChange = (html) => {
     this.setState({ html });
     console.log(html);
@@ -44,15 +49,45 @@ export default class NewStory extends Component {
         cover: this.state.img,
       };
       console.log(body);
-      let response = await fetch("http://localhost:9001/articles/", {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      if (this.props.match.params.slug) {
+        await fetch(
+          "http://localhost:9001/articles/" + this.props.match.params.slug,
+          {
+            method: "PUT",
+            body: JSON.stringify(body),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      } else {
+        await fetch("http://localhost:9001/articles/", {
+          method: "POST",
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
       this.props.history.push("/");
-      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  fetchAndAssign = async () => {
+    try {
+      let response = await fetch(
+        "http://localhost:9001/articles/" + this.props.match.params.slug
+      );
+      let article = await response.json();
+      console.log(article);
+      this.setState({
+        html: article.content,
+        category: article.category,
+        title: article.headLine,
+        img: article.cover,
+        subtitle: article.subHead,
+      });
     } catch (error) {
       console.log(error);
     }
