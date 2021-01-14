@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ReactQuill from "react-quill";
-import { Container } from "react-bootstrap";
+import { Container, Alert } from "react-bootstrap";
 import "react-quill/dist/quill.bubble.css";
 import { Button } from "react-bootstrap";
 import "./styles.scss";
@@ -13,6 +13,7 @@ export default class NewStory extends Component {
     title: "",
     img: "",
     subtitle: "",
+    authorName: "",
   };
   editor = React.createRef();
   componentDidMount = () => {
@@ -32,17 +33,49 @@ export default class NewStory extends Component {
   };
   submitButton = (e) => {
     e.preventDefault();
-    this.postArticle();
+    if (this.state.authorName) {
+      this.verifyUser();
+    } else {
+      alert("You need to include a username");
+    }
   };
-  postArticle = async () => {
+  verifyUser = async () => {
+    try {
+      let response = await fetch(
+        "http://localhost:9001/authors/?name=" + this.state.authorName
+      );
+      if (response.ok) {
+        let author = await response.json();
+        console.log(author);
+        this.postArticle(author._id);
+      } else {
+        console.log("not found");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  addArticleToUser = async (articleID, authorID) => {
+    try {
+      let response = await fetch(
+        "http://localhost:9001/articles/" +
+          articleID +
+          "/add-to-author/" +
+          authorID,
+        {
+          method: "POST",
+        }
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  postArticle = async (authorID) => {
     try {
       let body = {
         category: this.state.category,
-        author: {
-          name: "Not Abdul",
-          img:
-            "https://media.tenor.com/images/ebcdb89dd3dac8d1434c8151b6bddb16/tenor.gif",
-        },
+        author: authorID,
         headLine: this.state.title,
         subHead: this.state.subtitle,
         content: this.state.html,
@@ -61,13 +94,16 @@ export default class NewStory extends Component {
           }
         );
       } else {
-        await fetch("http://localhost:9001/articles/", {
+        let response = await fetch("http://localhost:9001/articles/", {
           method: "POST",
           body: JSON.stringify(body),
           headers: {
             "Content-Type": "application/json",
           },
         });
+        let res = await response.json();
+        console.log("RESPONSE", res);
+        this.addArticleToUser(res, authorID);
       }
       this.props.history.push("/");
     } catch (error) {
@@ -126,6 +162,13 @@ export default class NewStory extends Component {
           value={html}
           onChange={this.onChange}
           placeholder="Tell your story..."
+        />
+        <input
+          onKeyDown={this.onKeyDown}
+          placeholder="Your Name"
+          className="article-cover-input"
+          value={this.state.authorName}
+          onChange={(e) => this.setState({ authorName: e.currentTarget.value })}
         />
         <input
           onKeyDown={this.onKeyDown}
