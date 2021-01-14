@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ReactQuill from "react-quill";
-import { Container, Alert } from "react-bootstrap";
+import { Container, Alert, Row, Col } from "react-bootstrap";
 import "react-quill/dist/quill.bubble.css";
 import { Button } from "react-bootstrap";
 import "./styles.scss";
@@ -14,6 +14,8 @@ export default class NewStory extends Component {
     img: "",
     subtitle: "",
     authorName: "",
+    authorImage: "",
+    createUser: false,
   };
   editor = React.createRef();
   componentDidMount = () => {
@@ -39,6 +41,31 @@ export default class NewStory extends Component {
       alert("You need to include a username");
     }
   };
+  submitUserButton = (e) => {
+    e.preventDefault();
+    this.createUser();
+  };
+  createUser = async () => {
+    try {
+      let body = {
+        name: this.state.authorName,
+        img: this.state.authorImage,
+      };
+      let response = await fetch("http://localhost:9001/authors", {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      let res = await response.json(body);
+      console.log(res);
+      this.postArticle(res);
+      this.setState({ createUser: false });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   verifyUser = async () => {
     try {
       let response = await fetch(
@@ -50,6 +77,7 @@ export default class NewStory extends Component {
         this.postArticle(author._id);
       } else {
         console.log("not found");
+        this.setState({ createUser: true });
       }
     } catch (error) {
       console.log(error);
@@ -185,6 +213,54 @@ export default class NewStory extends Component {
         >
           Post
         </Button>
+
+        {this.state.createUser && (
+          <Container className="createUser">
+            <Row>
+              <Col>
+                <h5>
+                  We can't find a user with that name, so if you provide us an
+                  image we can make a new one!
+                </h5>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <input
+                  onKeyDown={this.onKeyDown}
+                  placeholder="Your Name"
+                  className="article-cover-input"
+                  value={this.state.authorName}
+                  onChange={(e) =>
+                    this.setState({ authorName: e.currentTarget.value })
+                  }
+                />
+              </Col>
+              <Col>
+                <input
+                  onKeyDown={this.onKeyDown}
+                  placeholder="Author Image Link"
+                  className="article-cover-input"
+                  value={this.state.authorImage}
+                  onChange={(e) =>
+                    this.setState({ authorImage: e.currentTarget.value })
+                  }
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Button
+                  variant="success"
+                  className="post-btn"
+                  onClick={(e) => this.submitUserButton(e)}
+                >
+                  Create User and Post Article
+                </Button>
+              </Col>
+            </Row>
+          </Container>
+        )}
       </Container>
     );
   }
